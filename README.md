@@ -9,7 +9,14 @@ A Minecraft 1.21.11 Fabric mod that lets you control render distance, simulation
 1. Install [Fabric Loader](https://fabricmc.net/use/installer/) for Minecraft 1.21.11
 2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for 1.21.11 and place it in your `mods/` folder
 3. Download `decktweaks-1.0.0.jar` from the [Releases](../../releases/latest) tab
-4. Place it in your `mods/` folder
+4. Place the jar in your Minecraft `mods/` folder:
+
+| OS | Mods folder location |
+|---|---|
+| **Windows** | `%AppData%\.minecraft\mods` |
+| **macOS** | `~/Library/Application Support/minecraft/mods` |
+| **Linux** | `~/.minecraft/mods` |
+
 5. Launch Minecraft with the Fabric profile
 
 ---
@@ -24,6 +31,8 @@ A Minecraft 1.21.11 Fabric mod that lets you control render distance, simulation
 | `Ctrl` + `[` | Simulation distance -1 |
 | `Ctrl` + `=` | Master volume +5% |
 | `Ctrl` + `-` | Master volume -5% |
+
+> **macOS note:** `Ctrl` refers to the Control key (⌃), not Command (⌘).
 
 All changes are shown as a small toast notification in the bottom-right corner of the screen.
 
@@ -40,11 +49,26 @@ All changes are shown as a small toast notification in the bottom-right corner o
 
 ## Building from source
 
+**macOS**
 ```bash
-git clone https://github.com/yourusername/decktweaks
+git clone https://github.com/n0ahn/decktweaks
 cd decktweaks
-export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # Mac only
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
 ./gradlew build
+```
+
+**Linux**
+```bash
+git clone https://github.com/n0ahn/decktweaks
+cd decktweaks
+./gradlew build
+```
+
+**Windows**
+```cmd
+git clone https://github.com/n0ahn/decktweaks
+cd decktweaks
+gradlew.bat build
 ```
 
 The built jar will be at `build/libs/decktweaks-1.0.0.jar`.
