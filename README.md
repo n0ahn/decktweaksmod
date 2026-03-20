@@ -72,3 +72,13 @@ gradlew.bat build
 ```
 
 The built jar will be at `build/libs/decktweaks-1.0.0.jar`.
+
+---
+
+## Preview
+<img width="520" height="204" alt="image" src="https://github.com/user-attachments/assets/b7ec0c4b-7bff-42c1-bff8-c7c3df193c54" />
+<img width="520" height="204" alt="image" src="https://github.com/user-attachments/assets/ab5d6eb6-beb1-448e-af98-2b4891fe3b8c" />
+<img width="520" height="204" alt="image" src="https://github.com/user-attachments/assets/c673a36a-5655-4cf6-b8a1-5dcd39056307" />
+
+
+
