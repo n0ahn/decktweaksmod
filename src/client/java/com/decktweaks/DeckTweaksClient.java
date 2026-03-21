@@ -1,8 +1,14 @@
 package com.decktweaks;
 
+import org.lwjgl.glfw.GLFW;
+
+import com.mojang.blaze3d.platform.InputConstants;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import org.lwjgl.glfw.GLFW;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
 
 public class DeckTweaksClient implements ClientModInitializer {
 
@@ -12,44 +18,32 @@ public class DeckTweaksClient implements ClientModInitializer {
     private static final int    MAX_SIMULATION_DISTANCE = 32;
     private static final double VOLUME_STEP             = 0.05;
 
-    private boolean wasCommaPressed        = false;
-    private boolean wasPeriodPressed       = false;
-    private boolean wasMinusPressed        = false;
-    private boolean wasPlusPressed         = false;
-    private boolean wasLeftBracketPressed  = false;
-    private boolean wasRightBracketPressed = false;
+    private static final KeyMapping.Category CATEGORY = new KeyMapping.Category(
+        Identifier.fromNamespaceAndPath(DeckTweaks.MOD_ID, "general")
+    );
+
+    private static KeyMapping keyRenderUp;
+    private static KeyMapping keyRenderDown;
+    private static KeyMapping keySimUp;
+    private static KeyMapping keySimDown;
+    private static KeyMapping keyVolumeUp;
+    private static KeyMapping keyVolumeDown;
 
     @Override
     public void onInitializeClient() {
         ToastHud.register();
 
+        keyRenderUp   = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.decktweaks.render_up",   InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_PERIOD,        CATEGORY));
+        keyRenderDown = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.decktweaks.render_down", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_COMMA,         CATEGORY));
+        keySimUp      = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.decktweaks.sim_up",      InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT_BRACKET, CATEGORY));
+        keySimDown    = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.decktweaks.sim_down",    InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_BRACKET,  CATEGORY));
+        keyVolumeUp   = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.decktweaks.volume_up",   InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_EQUAL,         CATEGORY));
+        keyVolumeDown = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.decktweaks.volume_down", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_MINUS,         CATEGORY));
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null || client.screen != null) {
-                wasCommaPressed        = false;
-                wasPeriodPressed       = false;
-                wasMinusPressed        = false;
-                wasPlusPressed         = false;
-                wasLeftBracketPressed  = false;
-                wasRightBracketPressed = false;
-                return;
-            }
+            if (client.player == null || client.screen != null) return;
 
-            long window = GLFW.glfwGetCurrentContext();
-
-            boolean ctrl = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_CONTROL)  == GLFW.GLFW_PRESS
-                        || GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT_CONTROL) == GLFW.GLFW_PRESS;
-
-            boolean commaNow         = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_COMMA)         == GLFW.GLFW_PRESS;
-            boolean periodNow        = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_PERIOD)        == GLFW.GLFW_PRESS;
-            boolean minusNow         = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_MINUS)         == GLFW.GLFW_PRESS;
-            boolean plusNow          = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_EQUAL)         == GLFW.GLFW_PRESS;
-            boolean leftBracketNow   = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT_BRACKET)  == GLFW.GLFW_PRESS;
-            boolean rightBracketNow  = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT_BRACKET) == GLFW.GLFW_PRESS;
-
-            // --- Render distance ---
-
-            // Ctrl+. -> increase
-            if (periodNow && !wasPeriodPressed && ctrl) {
+            while (keyRenderUp.consumeClick()) {
                 int current = client.options.renderDistance().get();
                 int next = Math.min(MAX_RENDER_DISTANCE, current + 1);
                 if (next != current) {
@@ -61,8 +55,7 @@ public class DeckTweaksClient implements ClientModInitializer {
                 }
             }
 
-            // Ctrl+, -> decrease
-            if (commaNow && !wasCommaPressed && ctrl) {
+            while (keyRenderDown.consumeClick()) {
                 int current = client.options.renderDistance().get();
                 int next = Math.max(MIN_RENDER_DISTANCE, current - 1);
                 if (next != current) {
@@ -74,10 +67,7 @@ public class DeckTweaksClient implements ClientModInitializer {
                 }
             }
 
-            // --- Simulation distance ---
-
-            // Ctrl+] -> increase
-            if (rightBracketNow && !wasRightBracketPressed && ctrl) {
+            while (keySimUp.consumeClick()) {
                 int current = client.options.simulationDistance().get();
                 int next = Math.min(MAX_SIMULATION_DISTANCE, current + 1);
                 if (next != current) {
@@ -88,8 +78,7 @@ public class DeckTweaksClient implements ClientModInitializer {
                 }
             }
 
-            // Ctrl+[ -> decrease
-            if (leftBracketNow && !wasLeftBracketPressed && ctrl) {
+            while (keySimDown.consumeClick()) {
                 int current = client.options.simulationDistance().get();
                 int next = Math.max(MIN_SIMULATION_DISTANCE, current - 1);
                 if (next != current) {
@@ -100,34 +89,21 @@ public class DeckTweaksClient implements ClientModInitializer {
                 }
             }
 
-            // --- Master volume ---
-
-            // Ctrl+- -> decrease
-            if (minusNow && !wasMinusPressed && ctrl) {
-                var volumeOption = client.options.getSoundSourceOptionInstance(net.minecraft.sounds.SoundSource.MASTER);
-                double current = volumeOption.get();
-                double next = Math.max(0.0, Math.round((current - VOLUME_STEP) * 100) / 100.0);
-                volumeOption.set(next);
-                int pct = (int) Math.round(next * 100);
-                ToastHud.show("Master volume", pct + "%", ToastHud.Icon.VOLUME, 0xFFFF55);
-            }
-
-            // Ctrl+= -> increase
-            if (plusNow && !wasPlusPressed && ctrl) {
+            while (keyVolumeUp.consumeClick()) {
                 var volumeOption = client.options.getSoundSourceOptionInstance(net.minecraft.sounds.SoundSource.MASTER);
                 double current = volumeOption.get();
                 double next = Math.min(1.0, Math.round((current + VOLUME_STEP) * 100) / 100.0);
                 volumeOption.set(next);
-                int pct = (int) Math.round(next * 100);
-                ToastHud.show("Master volume", pct + "%", ToastHud.Icon.VOLUME, 0xFFFF55);
+                ToastHud.show("Master volume", (int) Math.round(next * 100) + "%", ToastHud.Icon.VOLUME, 0xFFFF55);
             }
 
-            wasCommaPressed        = commaNow        && ctrl;
-            wasPeriodPressed       = periodNow       && ctrl;
-            wasMinusPressed        = minusNow        && ctrl;
-            wasPlusPressed         = plusNow         && ctrl;
-            wasLeftBracketPressed  = leftBracketNow  && ctrl;
-            wasRightBracketPressed = rightBracketNow && ctrl;
+            while (keyVolumeDown.consumeClick()) {
+                var volumeOption = client.options.getSoundSourceOptionInstance(net.minecraft.sounds.SoundSource.MASTER);
+                double current = volumeOption.get();
+                double next = Math.max(0.0, Math.round((current - VOLUME_STEP) * 100) / 100.0);
+                volumeOption.set(next);
+                ToastHud.show("Master volume", (int) Math.round(next * 100) + "%", ToastHud.Icon.VOLUME, 0xFFFF55);
+            }
         });
     }
 }

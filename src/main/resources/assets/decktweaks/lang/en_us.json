@@ -1,0 +1,10 @@
+{
+  "key.category.decktweaks.general": "DeckTweaks",
+
+  "key.decktweaks.render_up":   "Render Distance +",
+  "key.decktweaks.render_down": "Render Distance -",
+  "key.decktweaks.sim_up":      "Simulation Distance +",
+  "key.decktweaks.sim_down":    "Simulation Distance -",
+  "key.decktweaks.volume_up":   "Master Volume +",
+  "key.decktweaks.volume_down": "Master Volume -"
+}
