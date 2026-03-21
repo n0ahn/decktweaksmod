@@ -8,7 +8,7 @@ A Minecraft 1.21.11 Fabric mod that lets you control render distance, simulation
 
 1. Install [Fabric Loader](https://fabricmc.net/use/installer/) for Minecraft 1.21.11
 2. Download [Fabric API](https://modrinth.com/mod/fabric-api) for 1.21.11 and place it in your `mods/` folder
-3. Download `decktweaks-1.0.0.jar` from the [Releases](../../releases/latest) tab
+3. Download `decktweaks-x.x.x.jar` from the [Releases](../../releases/latest) tab
 4. Place the jar in your Minecraft `mods/` folder:
 
 | OS | Mods folder location |
@@ -25,14 +25,13 @@ A Minecraft 1.21.11 Fabric mod that lets you control render distance, simulation
 
 | Keybind | Action |
 |---|---|
-| `Ctrl` + `.` | Render distance +1 |
-| `Ctrl` + `,` | Render distance -1 |
-| `Ctrl` + `]` | Simulation distance +1 |
-| `Ctrl` + `[` | Simulation distance -1 |
-| `Ctrl` + `=` | Master volume +5% |
-| `Ctrl` + `-` | Master volume -5% |
+| `.` | Render distance +1 |
+| `,` | Render distance -1 |
+| `]` | Simulation distance +1 |
+| `[` | Simulation distance -1 |
+| `=` | Master volume +5% |
+| `-` | Master volume -5% |
 
-> **macOS note:** `Ctrl` refers to the Control key (⌃), not Command (⌘).
 
 All changes are shown as a small toast notification in the bottom-right corner of the screen.
 
@@ -71,7 +70,7 @@ cd decktweaks
 gradlew.bat build
 ```
 
-The built jar will be at `build/libs/decktweaks-1.0.0.jar`.
+The built jar will be at `build/libs/decktweaks-x.x.x.jar`.
 
 ---
 
